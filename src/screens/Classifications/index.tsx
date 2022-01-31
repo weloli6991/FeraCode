@@ -12,6 +12,7 @@ const Classifications = ({ route }) => {
     const [classifications, setClassifications] = useState([]);
     const [finish, setFinish] = useState(false);
     const [errorServer, setErrorServer] = useState(false);
+    const [calcHeight, setCalcHeight] = useState(0);
 
     useEffect(() => {
         standings();
@@ -69,7 +70,10 @@ const Classifications = ({ route }) => {
                 </R.View>
 
                 {classifications.length ?
-                    <R.View>
+                    <R.View style={{ flex: 1 }} onLayout={(ev) => {
+                        var calc = R.Dimensions.get('window').height - ev.nativeEvent.layout.height;
+                        setCalcHeight(R.Dimensions.get('window').height - 232 - calc)
+                    }}>
                         <R.View style={styles.sectionIconLeague}>
                             <R.Image
                                 style={styles.iconLeague}
@@ -79,9 +83,7 @@ const Classifications = ({ route }) => {
                         </R.View>
                         <R.FlatList
                             data={classifications[0].league.standings[0]}
-                            style={styles.flatList}
-                            keyExtractor={(item, index) => `key-${index}`}
-                            nestedScrollEnabled
+                            style={[styles.flatList, { height: calcHeight }]}
                             renderItem={(item) => {
                                 return (
                                     <Ripple style={styles.renderFlatList} onPress={() => { navigation.navigate('Team', { team: item.item.team.id }) }}>
